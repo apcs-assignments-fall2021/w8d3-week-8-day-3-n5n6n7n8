@@ -1,3 +1,5 @@
+import javax.management.DescriptorKey;
+
 public class Rational
 {
     // instance variables: every Rational object will have its own copy
@@ -16,23 +18,44 @@ public class Rational
         numerator = a;
         denominator = b;
     }
-
-    // *****
-    // You should go ahead and copy and paste the methods
-    // from last class into here:
-    // *****
-
-
-
-
-
-
-
-
-
-
-
-
+    public static Rational add(Rational r, Rational s) {
+        int newnum = (r.numerator*s.denominator)+(s.numerator*r.denominator);
+        int newden = r.denominator*s.denominator;
+        return simplify(new Rational(newnum, newden));
+    }
+    public static Rational subtract(Rational r, Rational s) {
+        int newnum = (r.numerator*s.denominator)-(s.numerator*r.denominator);
+        int newden = r.denominator*s.denominator;
+        return simplify(new Rational(newnum, newden));
+    }
+    public static Rational multiply(Rational r, Rational s) {
+        int newnum = r.numerator*s.numerator;
+        int newden = r.denominator*s.denominator;
+        return simplify(new Rational(newnum, newden));
+    }
+    public static Rational divide(Rational r, Rational s) {
+        int newnum = r.numerator*s.denominator;
+        int newden = r.denominator*s.numerator;
+        return simplify(new Rational(newnum, newden));
+    }
+    public static int greatestCommonFactor(int a, int b){
+        int gcf=0;
+        for (int i = 1; i <= Math.min(a,b); i++) {
+            if(a%i==0&&b%i==0) {
+                gcf=i;
+            }
+        }
+        return gcf;
+    }
+    public static Rational simplify(Rational r) {
+        while(greatestCommonFactor(r.numerator, r.denominator)>1)
+        {
+            int gcf=greatestCommonFactor(r.numerator,r.denominator);
+            r.denominator/=gcf;
+            r.numerator/=gcf;
+        }
+        return r;
+    }
 
     // *****
     // Here are all of our NON-STATIC methods:
@@ -44,49 +67,53 @@ public class Rational
     // Rational r = new Rational(5,2);
     // System.out.println(r.isImproper()) // true
     public boolean isImproper() {
-       return (this.numerator >= this.denominator);
+        return (this.numerator >= this.denominator);
     }
-
     // Returns whether or not the Rational is currently simplified
     // or not
     // Example:
     // Rational r = new Rational(6,12);
     // System.out.println(r.isSimplified()) // false
     public boolean isSimplified() {
-        return false; // YOUR CODE HERE
+        int a = this.numerator;
+        int b = this.denominator;
+        for (int i = 2; i <= Math.min(a,b); i++) {
+            if(a%i==0&&b%i==0) {
+                return false;
+            }
+        }
+        return true;
     }
-
     // Calculates the double value of our Rational
     // Example:
     // Rational r = new Rational(3,4);
     // System.out.println(r.calculateDecimalValue()) // 0.75
     public double calculateDecimalValue() {
-        return 0.0; // YOUR CODE HERE
+        return (this.numerator/(double) this.denominator);
     }
-
     // Returns the Rational we get from raising the rational number to an integer power
     // Example:
     // Rational r = new Rational(2,5);
     // System.out.println(r.pow(2)) // 4/25
     public Rational pow(int exponent) {
-        return null; // YOUR CODE HERE
+        return new Rational((int) Math.pow(this.numerator, exponent), (int) Math.pow(this.denominator, exponent));
     }
-
     // Checks to see if either the numerator or denominator match a given number
     // Example:
     // Rational r = new Rational(3,4);
     // System.out.println(r.contains(3)) // true
     public boolean contains(int x) {
-        return false; // YOUR CODE HERE
+        if(this.numerator==x||this.denominator==x) {
+            return true;
+        }
+        return false;
     }
-
     // This returns a string representation of a Rational (e.g. "1/2")
     // This method has already been written for you
     @Override
     public String toString() {
         return this.numerator + "/" + this.denominator;
     }
-
     // *********
     // Here are is an example of a void method that changes the original Rational:
     // *********
@@ -135,25 +162,27 @@ public class Rational
     // Rational r = new Rational(3, 5);
     // r.increment(); // r is now 8/5
     public void increment() {
-        // YOUR CODE HERE
+        this.numerator+=this.denominator;
     }
-
     // Decrements the current value of our Rational (decreases the value
     // of the current Rational by 1/1)
     // Example:
     // Rational r = new Rational(6, 5);
     // r.decrement(); // r is now 1/5
     public void decrement() {
-        // YOUR CODE HERE
+        this.numerator-=this.denominator;
     }
-
     // Given an int input representing the new denominator, changes the
     // current Rational to an equivalent fraction with that new denominator
     // You can assume that the numerator will always end up as a whole number
     // Rational r = new Rational(3, 8);
+    //16,8
+    //(4)
     // r.changeToEquivalentFraction(64); // r is now 24/64 (which is equivalent to 3/8)
     public void changeToEquivalentFraction(int newDenominator) {
-        // YOUR CODE HERE
+        double difference = newDenominator/(double) this.denominator;
+        this.numerator*=difference;
+        this.denominator*=difference;
     }
 
     // **********
@@ -163,26 +192,24 @@ public class Rational
     // Example:
     // Rational r = new Rational(-3,4);
     // System.out.println(r.isNegative()) // true
-    public boolean isNegative() { 
-        return false; // YOUR CODE HERE
+    public boolean isNegative() {
+        return !((this.numerator>0&&this.denominator>0)||(this.numerator<0&&this.denominator<0));
     }
-
     // Calculates the reciprocal of a Rational number.
     // The reciprocal of 3/4 is 4/3, the reciprocal of 1/2 is 2/1
     // Example:
     // Rational r = new Rational(5,2);
     // System.out.println(r.reciprocal()) // 2/5
     public Rational reciprocal() {
-        return null; // YOUR CODE HERE
+        return new Rational(this.denominator, this.numerator);
     }
-
     // Checks whether the current Rational is the exactly the same as other
     // Example:
     // Rational r = new Rational(2,5);
     // Rational s = new Rational(2,4);
     // System.out.println(r.equals(s)) // false
     public boolean equals(Rational other) {
-        return false; // YOUR CODE HERE
+        return this.numerator==other.numerator&&this.denominator==other.denominator;
     }
 
     // Rounds the current Rational to the nearest whole number value
@@ -190,7 +217,10 @@ public class Rational
     // Rational r = new Rational(3, 2);
     // r.round(); // r is now 2/1
     public void round() {
-        // YOUR CODE HERE
+        double h = this.calculateDecimalValue();
+        h+=0.5;
+        this.numerator=(int) h;
+        this.denominator=1;
     }
 }
 
